@@ -184,6 +184,7 @@ print("Sample kurtosis {:.2f}".format(stats.kurtosis(our_sample.losses)))
 # ('Losses have heavy tails and are right skewed, which will underestimate VaR and ES if we assume normality.')
 
 
+
 # Task 5b
 nu,loc,scale = stats.t.fit(our_sample.losses)
 print('nu={:.2f} loc={:.4f}, and scale={:.4f}'.format(nu,loc,scale))
@@ -207,12 +208,13 @@ for j in range(rT,T):
 Par_n = pd.DataFrame()
 Par_n['losses'] = our_sample['losses']
 Par_n.insert(1,"mean",np.nan)
-Par_n.insert(2,"variance",np.nan)
+Par_n.insert(2,"st_dev",np.nan)
+
 
 for j in range(rT,T): 
     roll_sample = our_sample.iloc[j-rT:j,1]
     Par_n.iloc[j,1] = st.mean(roll_sample)
-    Par_n.iloc[j,2] = st.variance(roll_sample)
+    Par_n.iloc[j,2] = st.stdev(roll_sample)
 
 
 # Task 5c
@@ -220,3 +222,25 @@ for j in range(rT,T):
     if Par_t['degr_fr'][j]< 2:
         Par_t['degr_fr'][j] = 2.1
 
+
+Par_t.insert(4,"VaR",np.nan)
+Par_t.insert(5,"ES",np.nan)
+Par_n.insert(3,"VaR",np.nan)
+Par_n.insert(4,"ES",np.nan)
+
+Par_n['VaR'] = our_sample['VaR']
+
+for j in range(rT,T):
+    
+    # T-distribution
+    
+    alpha = 0.99
+    mu = Par_n['mean'][j]
+    nu = Par_t['degr_fr'][j]
+    std = Par_n['st_dev'][j]
+    sig = m.sqrt(nu/(nu-2))*std
+    Par_t.iloc[j,4]= mu+m.sqrt((nu-2)/nu)*sig*stats.t.ppf(alpha,nu)
+    part1 = m.sqrt((nu-2)/nu)*sig*stats.t.pdf(stats.t.ppf(alpha,nu),nu)
+    part2 = 1/(1-alpha)*(nu+stats.t.ppf(alpha,nu)**2)/(nu-1)
+    Par_t.iloc[j,5] = mu+part1*part2 # Slide 13 Video lecture 7
+    
