@@ -211,7 +211,16 @@ for j in range(rT,T):
     Par_t.iloc[j,1] = stats.t.fit(roll_sample)[1]
     Par_t.iloc[j,2] = stats.t.fit(roll_sample)[2]
 
+# Normal
+Par_n = pd.DataFrame()
+Par_n['losses'] = our_sample['losses']
+Par_n.insert(1,"mean",np.nan)
+Par_n.insert(2,"variance",np.nan)
 
+for j in range(rT,T): 
+    roll_sample = our_sample.iloc[j-rT:j,1]
+    Par_n.iloc[j,1] = st.mean(roll_sample)
+    Par_n.iloc[j,2] = st.variance(roll_sample)
 
 
 
