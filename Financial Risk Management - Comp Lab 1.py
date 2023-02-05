@@ -244,3 +244,8 @@ for j in range(rT,T):
     part2 = 1/(1-alpha)*(nu+stats.t.ppf(alpha,nu)**2)/(nu-1)
     Par_t.iloc[j,5] = mu+part1*part2 # Slide 13 Video lecture 7
     
+    # N-distribution
+    
+    roll_sample = our_sample.iloc[j-rT:j,1]
+    sorted_losses = roll_sample.sort_values(ascending=False) 
+    Par_n.iloc[j,4] = np.mean(sorted_losses[:4])
