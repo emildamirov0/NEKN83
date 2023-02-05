@@ -164,7 +164,7 @@ print("Sample skewness {:.2f}".format(stats.skew(our_sample.losses)))
 print("Sample kurtosis {:.2f}".format(stats.kurtosis(our_sample.losses)))
 
 # ('Losses have heavy tails and are right skewed, which will underestimate VaR and ES if we assume normality. Instead we use T-distribution')
-
+# Similar to SP500 returns, losses seem to an extent seem to resemble normal distribution. However, as mentioned, losses have heavy tails and are right-skewed violating normality assumption.
 
 # Task 5b
 nu,loc,scale = stats.t.fit(our_sample.losses)
