@@ -188,28 +188,20 @@ print("Sample kurtosis {:.2f}".format(stats.kurtosis(our_sample.losses)))
 nu,loc,scale = stats.t.fit(our_sample.losses)
 print('nu={:.2f} loc={:.4f}, and scale={:.4f}'.format(nu,loc,scale))
 
-#our_sample.insert(7,"location",np.nan)
-#our_sample.insert(8,"scale",np.nan)
-#our_sample.insert(9,"degr_fr",np.nan)
-
-#for j in range(rT,T): 
-#    roll_sample = our_sample.iloc[j-rT:j,1]
-#    our_sample.iloc[j,7] = stats.t.fit(roll_sample)[1]
-#    our_sample.iloc[j,8] = stats.t.fit(roll_sample)[2]
-#    our_sample.iloc[j,9] = stats.t.fit(roll_sample)[0]
-
 
 Par_t = pd.DataFrame()
 Par_t['losses'] = our_sample['losses']
 Par_t.insert(1,"location",np.nan)
 Par_t.insert(2,"scale",np.nan)
 Par_t.insert(3,"degr_fr",np.nan)
-Par_t['degr_fr'][500:1007] = 2.1
+#Par_t['degr_fr'][500:1007] = 2.1
 
 for j in range(rT,T): 
     roll_sample = our_sample.iloc[j-rT:j,1]
     Par_t.iloc[j,1] = stats.t.fit(roll_sample)[1]
     Par_t.iloc[j,2] = stats.t.fit(roll_sample)[2]
+    Par_t.iloc[j,3] = stats.t.fit(roll_sample)[0]
+
 
 # Normal
 Par_n = pd.DataFrame()
@@ -223,6 +215,8 @@ for j in range(rT,T):
     Par_n.iloc[j,2] = st.variance(roll_sample)
 
 
+# Task 5c
+for j in range(rT,T):
+    if Par_t['degr_fr'][j]< 2:
+        Par_t['degr_fr'][j] = 2.1
 
-
-    
