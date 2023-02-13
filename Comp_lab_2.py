@@ -117,3 +117,9 @@ model_stats_08.loc['Kupiec_p-value']
 # For each model in 2008, Christofferson test gives different results: n, t, POT have p-value over 0,01; and BHS, EWMA have p-value less than 0,01, meaning that BHS and EWMA are rejected since violations are not independently distributed.
 # In conclusion, EWMA does not pass Christofferson test in both 2007 and 2008, BHS does not pass the test for year 2008. Other models perform well.
 
+# Traffic light test
+# We don't need to make any additional calculations for the traffic light since the only thing that is needed is the number of violations. As for 2007, in BHS model we can see the number of violations are less than 5, which means they are in the green zone, so it indicates that the method that used to estimate ES does not have accuracy or quality problem. Then we can see the numbers of violations in EWMA and Pot models are equal to 5, so they are in amber zone and suggest the possibility that they have questions about accuracy and quality. And in n model and t model, the number of violations are much larger than 10, so they are in red zone and we can almost certainly say that there are problems with these ES methods. 
+# And as for the data of 2008, the number of violations in Pot model is 3, which is less than 5 and in the green zone so we think it does not have accuracy and quality problem. The violation numbers in EWMA, BHS and t models are lager than 5 but smaller than 10, so they are in amber zone and show the probability of the problems with ES methods. But in n model the violation number is bigger than 10 and in the red zone, we can nearly ensure that this ES method has problems.
+# In conclusion, for the 2007, it seems that the BHS method is the best. But for 2008, the Pot model has the highest quality and also the most accurate.
+
+
