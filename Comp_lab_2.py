@@ -107,4 +107,6 @@ viol_07, model_stats_07 = backtest(s_07)
 viol_08, model_stats_08 = backtest(s_08) 
 
 
-
+# To show particular results
+model_stats_07.loc['Kupiec_p-value']
+model_stats_08.loc['Kupiec_p-value']
