@@ -115,3 +115,5 @@ model_stats_08.loc['Kupiec_p-value']
 # Christofferson independence test
 # For each model in 2007, Christofferson test gives different results: BHS, n, t, POT have p-value over significance level 0,01; and EWMA has p-value less than 0,01. It indicates that EWMA is statistically rejected since violations are not independently distributed.
 # For each model in 2008, Christofferson test gives different results: n, t, POT have p-value over 0,01; and BHS, EWMA have p-value less than 0,01, meaning that BHS and EWMA are rejected since violations are not independently distributed.
+# In conclusion, EWMA does not pass Christofferson test in both 2007 and 2008, BHS does not pass the test for year 2008. Other models perform well.
+
