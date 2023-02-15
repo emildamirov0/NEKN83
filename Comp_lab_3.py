@@ -92,7 +92,24 @@ ax.tick_params(axis='x',labelrotation=90,labelsize=9)
 
 #%%
 
-k = 0.5
+k=0.5
+K = accounting_data.LCT+k*accounting_data.DLTT 
+E = accounting_data.CSHO*price_data.Prices.iloc[-1] 
+rf = np.mean(risk_free.Riskfree) 
+enddate=datetime(2015,12,31)
+months=[1,3,6,9,12]
+PD=[]
+for j inrange(5):
+    if j==0:
+        startdate=datetime(2005,11,30) 
+    elif j==1:
+        startdate=datetime(2005,9,30)
+    elif j==2:
+        startdate=datetime(2005,6,30)
+    elif j==3:
+        startdate=datetime(2005,3,31)
+    elif j==4:
+        startdate=datetime(2004,12,31)
 
 
 
