@@ -12,6 +12,7 @@ from scipy import stats
 from scipy.stats import norm
 from matplotlib import pyplot as plt
 from scipy.optimize import minimize
+from datetime import datetime
 import os
 
 os.chdir('/Users/emildamirov/Downloads')
@@ -76,21 +77,19 @@ ax.tick_params(axis='x',labelrotation=90,labelsize=9)
     
 
 #%%
-# Create dataset
 # height = output['PD']
 # bars = K_list
 # x_pos = np.arange(len(bars))
- 
-# # Create bars
 # plt.bar(x_pos, height)
- 
-# # Create names on the x-axis
 # plt.xticks(x_pos, bars)
- 
-# # Show graphic
 # plt.show()
 
 #%%
+
+# Task 2
+
+price_data["Date"] = pd.to_datetime(price_data["Date"])
+price_datatt = price_data.set_index('Date')
 
 k=0.5
 K = accounting_data.LCT+k*accounting_data.DLTT 
@@ -98,8 +97,12 @@ E = accounting_data.CSHO*price_data.Prices.iloc[-1]
 rf = np.mean(risk_free.Riskfree) 
 enddate=datetime(2015,12,31)
 months=[1,3,6,9,12]
+sige = np.zeros(5)
 PD=[]
-for j inrange(5):
+
+#%%
+for j in range(5):
+    
     if j==0:
         startdate=datetime(2005,11,30) 
     elif j==1:
@@ -111,6 +114,16 @@ for j inrange(5):
     elif j==4:
         startdate=datetime(2004,12,31)
 
+    TR = (price_datatt.index >= startdate) & (price_datatt.index <= enddate)
+    
+    equityReturns = price_datatt.loc[TR, 'Prices'].pct_change().dropna()
+    
+    sige[j] = equityReturns.std() *np.sqrt(250)
+    res = minimize(my_merton, x0, method = 'BFGS',
+                  args = (sige[j], E, K, rf, t), options = {'disp': False})
 
 
-
+#%%
+X = ['One month', 'Three months', 'Six months', 'Nine months', 'One year']
+plt.bar(X, sige)
+plt.ylabel('Equity volatility')
