@@ -171,3 +171,6 @@ X = ['One month', 'three months','six months', 'nine months', '1 year', 'EWMA']
 plt.bar(X, PD_v)
 plt.ylabel('PD')
 fig.set_size_inches(10,6)
+
+Q1: According to these figures, we can see credit risk increases as the k becomes bigger obviously. So, we think Merton models are most sensitive to input k. We also think Merton models are very sensitive to input equity volatility, since in the second figure we can see different time distances have very different probabilities of default because of the changes of equity volatility.
+Q2: We think the Merton model is a useful model for risk management. Firstly, as we said in Question 1, there is a positive relationship between k and credit risk, which means more proportion of long term debt in the total debt causes more credit risk. It is not difficult to explain by economic way, when a firm has more long term debt, it should pay more cash flow in every period, the probability of default increases. Secondly, equity volatility also influences credit risk. This is because equity volatility influences asset volatility directly, an unstable asset returns will bring high credit risk. And we also consider some disadvantages of this model. For example, it only can apply to non-public corporates, underestimate true probability of default, too simplistic debt structure and unrealistic timing assumption.
