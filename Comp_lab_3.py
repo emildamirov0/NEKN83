@@ -5,7 +5,6 @@ Created on Wed Feb 15 10:13:52 2023
 
 @author: emildamirov
 """
-
 import pandas as pd
 import numpy as np
 from scipy import stats
@@ -14,6 +13,8 @@ from matplotlib import pyplot as plt
 from scipy.optimize import minimize
 from datetime import datetime
 import os
+import plotly.express as px
+from matplotlib.figure import Figure
 
 os.chdir('/Users/emildamirov/Downloads')
 risk_free = pd.read_excel('DataLab3rf.xlsx')
@@ -87,43 +88,86 @@ ax.tick_params(axis='x',labelrotation=90,labelsize=9)
 #%%
 
 # Task 2
+# Volatility estimation
 
-price_data["Date"] = pd.to_datetime(price_data["Date"])
-price_datatt = price_data.set_index('Date')
+price_data["Date"] = pd.to_datetime(price_data["Date"], format = '%Y%m%d')
+price_data_tt = price_data.set_index('Date')
 
 k=0.5
-K = accounting_data.LCT+k*accounting_data.DLTT 
+K = accounting_data.LCT+k * accounting_data.DLTT
 E = accounting_data.CSHO*price_data.Prices.iloc[-1] 
 rf = np.mean(risk_free.Riskfree) 
+t = 1
 enddate=datetime(2015,12,31)
 months=[1,3,6,9,12]
 sige = np.zeros(5)
-PD=[]
+PD_v=[]
 
 #%%
 for j in range(5):
     
     if j==0:
-        startdate=datetime(2005,11,30) 
+        startdate=datetime(2015,11,30) 
     elif j==1:
-        startdate=datetime(2005,9,30)
+        startdate=datetime(2015,9,30)
     elif j==2:
-        startdate=datetime(2005,6,30)
+        startdate=datetime(2015,6,30)
     elif j==3:
-        startdate=datetime(2005,3,31)
+        startdate=datetime(2015,3,31)
     elif j==4:
-        startdate=datetime(2004,12,31)
+        startdate=datetime(2014,12,31)
 
-    TR = (price_datatt.index >= startdate) & (price_datatt.index <= enddate)
+    TR = (price_data_tt.index >= startdate) & (price_data_tt.index <= enddate)
+    equityReturns = price_data_tt.loc[TR, 'Prices'].pct_change().dropna()
     
-    equityReturns = price_datatt.loc[TR, 'Prices'].pct_change().dropna()
-    
-    sige[j] = equityReturns.std() *np.sqrt(250)
+    sige[j] = equityReturns.std() * np.sqrt(250)
     res = minimize(my_merton, x0, method = 'BFGS',
                   args = (sige[j], E, K, rf, t), options = {'disp': False})
+    
+    #DD = (np.log(res.x[1])+(rf-0.5*res.x[0]**2)*t-np.log(K))/(res.x[0]*np.sqrt(t)) # DD slide 9 VL 13
+    DD = (np.log(res.x[1])+(rf-0.5*sige[j]**2)*t-np.log(K))/(sige[j]*np.sqrt(t)) # DD slide 9 VL 13
+    
+    
+    PD = float(norm.cdf(-DD))
+    PD_v.append(PD)
+
+#%%
+X = ['One month','Three months', 'Six months', 'Nine months', 'One year' ]
+plt.bar(X, PD_v)
+plt.ylabel('Equity volatility')
+fig.set_size_inches(10,6)
 
 
 #%%
-X = ['One month', 'Three months', 'Six months', 'Nine months', 'One year']
-plt.bar(X, sige)
-plt.ylabel('Equity volatility')
+
+# Task 3: VWHS
+
+eta = equityReturns # Setting innovation equal to Loss is ok since daily returns close to zero and hard to predict
+T = len(eta)
+sigma = np.zeros(T+1)# Sigma_0 in slides
+Lambda = 0.94 # RiskMetrics
+sigma[0] = np.var(equityReturns)
+
+for j in range(1,T+1):
+    
+    sigma[j] = ((1-Lambda)*(eta.iloc[j-1]-np.mean(eta))**2+ Lambda * sigma[j-1])
+
+
+sigel = np.mean((np.sqrt (sigma)) * np.sqrt (250)) # Sigma is a variance
+res = minimize (my_merton, x0, method='BFGS',
+                args=(sigel,E,K,rf,t), options={'disp': False})
+
+DDEWMA = (np.log(res.x[1])+(rf-0.5*sigel**2) *t-np.log(K))/(sigel*np.sqrt(t)) # DD slide 9 VL 13
+
+PDEWMA = norm.cdf(-DDEWMA)
+PD_v.append(PDEWMA.item())
+sige = np.append (sige , sigel)
+
+
+#%%
+fig,ax=plt.subplots(nrows=1,ncols=1)
+
+X = ['One month', 'three months','six months', 'nine months', '1 year', 'EWMA']
+plt.bar(X, PD_v)
+plt.ylabel('PD')
+fig.set_size_inches(10,6)
